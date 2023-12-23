@@ -1,0 +1,2 @@
+class APIConnException(Exception):
+	pass
