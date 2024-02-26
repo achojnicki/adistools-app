@@ -10,7 +10,7 @@ colors={
 
 }
 
-class Logs_Page(wx.Panel):
+class logs_page(wx.Panel):
 	def __init__(self, root, parent, frame):
 		self._root=root
 		self._frame=frame
@@ -50,9 +50,8 @@ class Logs_Page(wx.Panel):
 		self._grid.SetColSize(8, 900)
 
 		
-		self._previous_page_button=wx.Button(self, wx.ID_ANY, "<")
-		self._next_page_button=wx.Button(self, wx.ID_ANY, ">")
-
+		self._previous_page_button=wx.Button(self, wx.ID_ANY, "<",size=(50, 15), style=wx.BU_EXACTFIT|wx.BORDER_NONE)
+		self._next_page_button=wx.Button(self, wx.ID_ANY, ">",size=(50, 15), style=wx.BU_EXACTFIT|wx.BORDER_NONE)
 
 		self._previous_page_button.Disable()
 
@@ -93,11 +92,13 @@ class Logs_Page(wx.Panel):
 
 		self.SetSizer(self._main_sizer)
 
-		self._frame.Bind(wx.EVT_SHOW, self._do_propagate_logs)
-
 		self._previous_page_button.Bind(wx.EVT_BUTTON, self._previous_page)
 		self._next_page_button.Bind(wx.EVT_BUTTON, self._next_page)
 		self._filter_button.Bind(wx.EVT_BUTTON, self._filter)
+
+
+		self._frame._on_load.append(self._do_propagate_logs)
+
 
 	def _filter(self, event):
 		self._page=1

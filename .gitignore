@@ -1,8 +1,9 @@
-﻿__pycache__
+__pycache__
 __pycache__/*
 **/__pycache__
 **/__pycache__/*
-
+**/build
+**/build/*
 .DS_Store
 **/.DS_Store
 

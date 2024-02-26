@@ -26,7 +26,8 @@ class Login(wx.Frame):
 		self._login_field.Bind(wx.EVT_TEXT_ENTER, self.do_login)
 		self._password_field.Bind(wx.EVT_TEXT_ENTER, self.do_login)
 
-		self.Bind(wx.EVT_CLOSE, self._on_close)
+		#self.Bind(wx.EVT_CLOSE, self._on_close)
+
 	def _on_close(self, event):
 		exit(0)
 
@@ -34,9 +35,9 @@ class Login(wx.Frame):
 		try:
 			r=self._root._api_conn.login(self.cred)
 			if r:
-				wx.MessageBox('Login Successful','Success')
+				self._root._logged_in=True
+				#wx.MessageBox('Login Successful','Success')
 				self.Destroy()
-				self._root._adistools_gui.Show()
 
 		except Exception as e:
 			wx.MessageBox(e.message, 'Error')
