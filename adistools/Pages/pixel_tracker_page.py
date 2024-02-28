@@ -143,18 +143,26 @@ class pixel_tracker_page(wx.Panel):
 
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_pixel_trackers_select, self._pixel_trackers_list)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_pixel_trackers_deselect, self._pixel_trackers_list)
+		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._pixel_trackers_list)
+		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._metrics_list)
+		self.Bind(wx.EVT_LIST_COL_BEGIN_DRAG, self._veto_event, self._pixel_trackers_list)
+		self.Bind(wx.EVT_LIST_COL_BEGIN_DRAG, self._veto_event, self._metrics_list)
+
+
 
 		self.Bind(wx.EVT_BUTTON, self._previous_pixel_trackers_page, self._pixel_trackers_list_previous_page_button)
 		self.Bind(wx.EVT_BUTTON, self._next_pixel_trackers_page, self._pixel_trackers_list_next_page_button)
-		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._pixel_trackers_list)
-		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._metrics_list)
+
 
 		self.Bind(wx.EVT_TOOL, self._do_show_new_pixel_tracker_frame, id=1)
 		self.Bind(wx.EVT_TOOL, self._do_delete_pixel_tracker, id=2)
 		self.Bind(wx.EVT_TOOL, self._do_copy_pixel_tracker_to_clipboard, id=3)
 
-		
 		self._frame._on_load.append(self._do_propagate_pixel_trackers)
+
+
+	def _veto_event(self, event):
+		event.Veto()
 
 	def _on_sort(self, event):
 		self.Layout()
@@ -171,6 +179,8 @@ class pixel_tracker_page(wx.Panel):
 		if wx.TheClipboard.Open():
 			wx.TheClipboard.SetData(data)
 			wx.TheClipboard.Flush()
+			wx.TheClipboard.Close()
+
 
 	def _do_delete_pixel_tracker(self, event):
 		if self._pixel_trackers_list.GetFocusedItem() == -1:

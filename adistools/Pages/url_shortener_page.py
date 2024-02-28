@@ -95,8 +95,10 @@ class url_shortener_page(wx.Panel):
 		self._toolbar=wx.ToolBar(self, id=wx.ID_ANY, style=wx.TB_HORIZONTAL)
 		new_icon=wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_OTHER, (16, 16))
 		delete_icon=wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_OTHER, (16, 16))
-		self._toolbar.AddTool(1, "New", new_icon, wx.NullBitmap, wx.ITEM_NORMAL, 'New', "New short URL", None)
-		self._toolbar.AddTool(2, "delete", delete_icon, wx.NullBitmap, wx.ITEM_NORMAL, "Delete", "Delete short URL", None)
+		copy_icon=wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_OTHER, (16, 16))
+		self._toolbar.AddTool(1, "New", new_icon, wx.NullBitmap, wx.ITEM_NORMAL)
+		self._toolbar.AddTool(2, "Delete", delete_icon, wx.NullBitmap, wx.ITEM_NORMAL)
+		self._toolbar.AddTool(3, "Copy short URL to clipboard", copy_icon, wx.NullBitmap, wx.ITEM_NORMAL)
 		self._toolbar.Realize()
 
 		self._urls_list=wx.ListCtrl(self, id=wx.ID_ANY, style=wx.LC_REPORT|wx.LC_SINGLE_SEL)
@@ -148,14 +150,19 @@ class url_shortener_page(wx.Panel):
 
 		self.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_short_url_select, self._urls_list)
 		self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_short_url_deselect, self._urls_list)
+		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._urls_list)
+		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._metrics_list)
+		self.Bind(wx.EVT_LIST_COL_BEGIN_DRAG, self._veto_event, self._urls_list)
+		self.Bind(wx.EVT_LIST_COL_BEGIN_DRAG, self._veto_event, self._metrics_list)
+
 
 		self.Bind(wx.EVT_BUTTON, self._previous_urls_page, self._urls_list_previous_page_button)
 		self.Bind(wx.EVT_BUTTON, self._next_urls_page, self._urls_list_next_page_button)
-		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._urls_list)
-		self.Bind(wx.EVT_LIST_COL_CLICK, self._on_sort, self._metrics_list)
+
 
 		self.Bind(wx.EVT_TOOL, self._do_show_new_short_url_frame, id=1)
 		self.Bind(wx.EVT_TOOL, self._do_delete_short_url, id=2)
+		self.Bind(wx.EVT_TOOL, self._do_copy_sort_url_to_clipboard, id=3)
 
 		
 		self._frame._on_load.append(self._do_propagate_short_urls)
@@ -163,6 +170,22 @@ class url_shortener_page(wx.Panel):
 	def _on_sort(self, event):
 		self.Layout()
 		self.Update()
+
+	def _veto_event(self, event):
+		event.Veto()
+
+	def _do_copy_sort_url_to_clipboard(self, event):
+		if self._urls_list.GetFocusedItem() == -1:
+			rumps.notification('adistools','Warning', message='Select short URL to copy.', sound=True)
+			return False
+		
+		redirection_query=self._short_urls[self._short_urls_indexes[self._urls_list.GetFocusedItem()]]['redirection_query']
+		data=wx.TextDataObject()
+		data.SetText(SHORT_URL_DOMAIN+redirection_query)
+		if wx.TheClipboard.Open():
+			wx.TheClipboard.SetData(data)
+			wx.TheClipboard.Flush()
+			wx.TheClipboard.Close()
 
 	def _do_delete_short_url(self, event):
 		if self._urls_list.GetFocusedItem() == -1:

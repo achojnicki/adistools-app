@@ -9,6 +9,7 @@ from .pages.pixel_tracker_page import pixel_tracker_page
 from threading import Thread
 from sys import exit
 from time import sleep
+from AppKit import NSWorkspace, NSApplicationActivateAllWindows
 
 import wx
 import rumps
@@ -52,9 +53,16 @@ class adistools_rumps(rumps.App):
 	def show(self, event):
 		if self._root._logged_in:
 			self._root._adistools_wx.Show()
+			self._switch_to_app()
+
 		else:
 			rumps.notification('adistools',subtitle=None, message='You need to login first.')
 			self._root._login.Show()
+
+	def _switch_to_app(self):
+		for item in NSWorkspace.sharedWorkspace().runningApplications():
+			if item.localizedName()=='adistools':
+				item.activateWithOptions_(NSApplicationActivateAllWindows)
 
 class adistools:
 	def __init__(self):

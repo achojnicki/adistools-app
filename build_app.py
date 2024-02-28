@@ -9,7 +9,7 @@ OPTIONS = {
     'iconfile': None,
     'includes': ['wx','sys','html','requests','socketio', 'rumps'],
     'excludes': ['numpy','scipy','transformers','torch','gevent','matplotlib','pil','jinja2','werkzeug','flask','jedi','markupsafe','test'],
-    'plist': {'LSUIElement': True}
+    'plist': {'LSUIElement': True, }
     }
 
 setup(
