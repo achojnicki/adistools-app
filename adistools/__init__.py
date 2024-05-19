@@ -84,7 +84,7 @@ class adistools:
 
 
 	def start(self):
-		self._wx_thread.start()
+		#self._wx_thread.start()
 		self._login.Show()
 
 		self._adistools_rumps.run()

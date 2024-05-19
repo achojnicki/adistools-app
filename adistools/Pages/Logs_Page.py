@@ -123,9 +123,23 @@ class logs_page(wx.Panel):
 			self._grid.SetCellValue(r.index(a),7,a['caller']['function'])
 			self._grid.SetCellValue(r.index(a),8,a['caller']['filename'])
 
+
+			attr=wx.grid.GridCellAttr()
+			font=wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+			attr.SetFont(font)
+			self._grid.SetAttr(r.index(a), 2, attr)
+			self._grid.SetCellAlignment(r.index(a), 2, wx.ALIGN_CENTER, wx.ALIGN_CENTER)
+
 			if a['log_level'] in colors:
 				for x in range(9):
 					self._grid.SetCellBackgroundColour(r.index(a), x, colors[a['log_level']])
+			
+		for a in range(self._grid.GetNumberCols()):
+			self._grid.DisableColResize(a)
+			
+		for a in range(self._grid.GetNumberRows()):
+			self._grid.DisableRowResize(a)
+
 
 	def _change_page(self):
 		self._do_propagate_logs()
